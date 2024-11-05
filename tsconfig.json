@@ -1,9 +1,10 @@
 {
 	"compilerOptions": {
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"target": "ES2022",
+		"module": "Node16",
+		"moduleResolution": "Node16",
+		"target": "ESNext",
 		"noEmit": true,
 		"allowImportingTsExtensions": true,
+		"verbatimModuleSyntax": true,
 	}
 }

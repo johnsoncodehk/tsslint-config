@@ -1,12 +1,14 @@
-import { defineConfig } from '@tsslint/config';
-import { convertRule } from '@tsslint/eslint';
-import * as path from 'node:path';
+
 import type * as ts from 'typescript';
 
-module.exports = defineConfig({
+import path = require('node:path');
+import config = require('@tsslint/config');
+import eslint = require('@tsslint/eslint');
+
+module.exports = config.defineConfig({
 	rules: {
 		semantic: {
-			'no-unnecessary-type-assertion': convertRule(
+			'no-unnecessary-type-assertion': eslint.convertRule(
 				require('./node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-type-assertion').default,
 				[],
 				0 satisfies ts.DiagnosticCategory.Warning
