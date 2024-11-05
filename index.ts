@@ -285,6 +285,9 @@ module.exports = defineConfig({
 					return;
 				}
 				const packageJson = JSON.parse(ts.sys.readFile(packageJsonPath) ?? '');
+				if (packageJson.private) {
+					return;
+				}
 				const parentPackageJsonPath = ts.findConfigFile(path.dirname(path.dirname(packageJsonPath)), ts.sys.fileExists, 'package.json');
 				const parentPackageJson = !!parentPackageJsonPath && parentPackageJsonPath !== packageJsonPath
 					? JSON.parse(ts.sys.readFile(parentPackageJsonPath) ?? '')
