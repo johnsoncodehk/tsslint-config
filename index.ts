@@ -5,7 +5,7 @@ import type * as ts from 'typescript';
 
 module.exports = defineConfig({
 	rules: {
-		semantics: {
+		semantic: {
 			'no-unnecessary-type-assertion': convertRule(
 				require('./node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-type-assertion').default,
 				[],
@@ -322,7 +322,7 @@ module.exports = defineConfig({
 				});
 			},
 		},
-		syntax: {
+		syntactic: {
 			/**
 			 * @example
 			 * ```diff
