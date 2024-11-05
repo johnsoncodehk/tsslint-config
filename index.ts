@@ -1,4 +1,3 @@
-
 import type * as ts from 'typescript';
 
 import path = require('node:path');
