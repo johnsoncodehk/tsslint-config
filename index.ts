@@ -275,6 +275,39 @@ module.exports = config.defineConfig({
 					ts.forEachChild(node, visit);
 				});
 			},
+			'no-unnecessary-parentheses'({ typescript: ts, sourceFile, reportWarning }) {
+				ts.forEachChild(sourceFile, function visit(node) {
+					if (ts.isParenthesizedExpression(node)) {
+						if (
+							ts.isIdentifier(node.expression)
+							|| ts.isPropertyAccessExpression(node.expression)
+							|| ts.isElementAccessExpression(node.expression)
+							|| ts.isCallExpression(node.expression)
+						) {
+							const start = node.getStart(sourceFile);
+							const end = node.getEnd();
+							reportWarning(
+								`Parentheses are unnecessary.`,
+								start,
+								end
+							).withFix(
+								'Remove parentheses',
+								() => [{
+									fileName: sourceFile.fileName,
+									textChanges: [{
+										span: { start, length: 1 },
+										newText: '',
+									}, {
+										span: { start: end - 1, length: 1 },
+										newText: '',
+									}],
+								}]
+							);
+						}
+					}
+					ts.forEachChild(node, visit);
+				});
+			},
 		},
 		workspace: {
 			'missing-dependency'({ typescript: ts, sourceFile, reportError, languageServiceHost }) {
