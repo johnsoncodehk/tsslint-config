@@ -9,7 +9,7 @@
 		"@tsslint/eslint": "latest",
 		"@types/node": "latest",
 		"@typescript-eslint/eslint-plugin": "latest",
-		"esbuild": "^0.23.0",
+		"esbuild": "latest",
 		"typescript": "latest"
 	},
 	"pnpm": {
