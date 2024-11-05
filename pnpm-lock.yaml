@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  eslint:
+    hash: zkezryfwuynxcysseud66ngtpq
+    path: patches/eslint.patch
+
 importers:
 
   .:
@@ -13,13 +18,13 @@ importers:
         version: 1.1.1
       '@tsslint/eslint':
         specifier: latest
-        version: 1.1.1(@typescript-eslint/typescript-estree@8.13.0(typescript@5.6.3))(eslint@9.14.0)
+        version: 1.1.1(@typescript-eslint/typescript-estree@8.13.0(typescript@5.6.3))(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))
       '@types/node':
         specifier: latest
         version: 22.8.7
       '@typescript-eslint/eslint-plugin':
         specifier: latest
-        version: 8.13.0(@typescript-eslint/parser@8.13.0(eslint@9.14.0)(typescript@5.6.3))(eslint@9.14.0)(typescript@5.6.3)
+        version: 8.13.0(@typescript-eslint/parser@8.13.0(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3))(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3)
       esbuild:
         specifier: latest
         version: 0.24.0
@@ -762,9 +767,9 @@ snapshots:
   '@esbuild/win32-x64@0.24.0':
     optional: true
 
-  '@eslint-community/eslint-utils@4.4.1(eslint@9.14.0)':
+  '@eslint-community/eslint-utils@4.4.1(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))':
     dependencies:
-      eslint: 9.14.0
+      eslint: 9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq)
       eslint-visitor-keys: 3.4.3
 
   '@eslint-community/regexpp@4.12.1': {}
@@ -830,11 +835,11 @@ snapshots:
     dependencies:
       '@tsslint/types': 1.1.1
 
-  '@tsslint/eslint@1.1.1(@typescript-eslint/typescript-estree@8.13.0(typescript@5.6.3))(eslint@9.14.0)':
+  '@tsslint/eslint@1.1.1(@typescript-eslint/typescript-estree@8.13.0(typescript@5.6.3))(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))':
     dependencies:
       '@typescript-eslint/scope-manager': 7.18.0
       '@typescript-eslint/typescript-estree': 8.13.0(typescript@5.6.3)
-      eslint: 9.14.0
+      eslint: 9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq)
 
   '@tsslint/types@1.1.1': {}
 
@@ -846,15 +851,15 @@ snapshots:
     dependencies:
       undici-types: 6.19.8
 
-  '@typescript-eslint/eslint-plugin@8.13.0(@typescript-eslint/parser@8.13.0(eslint@9.14.0)(typescript@5.6.3))(eslint@9.14.0)(typescript@5.6.3)':
+  '@typescript-eslint/eslint-plugin@8.13.0(@typescript-eslint/parser@8.13.0(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3))(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.1
-      '@typescript-eslint/parser': 8.13.0(eslint@9.14.0)(typescript@5.6.3)
+      '@typescript-eslint/parser': 8.13.0(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3)
       '@typescript-eslint/scope-manager': 8.13.0
-      '@typescript-eslint/type-utils': 8.13.0(eslint@9.14.0)(typescript@5.6.3)
-      '@typescript-eslint/utils': 8.13.0(eslint@9.14.0)(typescript@5.6.3)
+      '@typescript-eslint/type-utils': 8.13.0(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3)
+      '@typescript-eslint/utils': 8.13.0(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3)
       '@typescript-eslint/visitor-keys': 8.13.0
-      eslint: 9.14.0
+      eslint: 9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq)
       graphemer: 1.4.0
       ignore: 5.3.2
       natural-compare: 1.4.0
@@ -864,14 +869,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@8.13.0(eslint@9.14.0)(typescript@5.6.3)':
+  '@typescript-eslint/parser@8.13.0(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 8.13.0
       '@typescript-eslint/types': 8.13.0
       '@typescript-eslint/typescript-estree': 8.13.0(typescript@5.6.3)
       '@typescript-eslint/visitor-keys': 8.13.0
       debug: 4.3.7
-      eslint: 9.14.0
+      eslint: 9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq)
     optionalDependencies:
       typescript: 5.6.3
     transitivePeerDependencies:
@@ -887,10 +892,10 @@ snapshots:
       '@typescript-eslint/types': 8.13.0
       '@typescript-eslint/visitor-keys': 8.13.0
 
-  '@typescript-eslint/type-utils@8.13.0(eslint@9.14.0)(typescript@5.6.3)':
+  '@typescript-eslint/type-utils@8.13.0(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3)':
     dependencies:
       '@typescript-eslint/typescript-estree': 8.13.0(typescript@5.6.3)
-      '@typescript-eslint/utils': 8.13.0(eslint@9.14.0)(typescript@5.6.3)
+      '@typescript-eslint/utils': 8.13.0(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3)
       debug: 4.3.7
       ts-api-utils: 1.4.0(typescript@5.6.3)
     optionalDependencies:
@@ -918,13 +923,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@8.13.0(eslint@9.14.0)(typescript@5.6.3)':
+  '@typescript-eslint/utils@8.13.0(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))(typescript@5.6.3)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.4.1(eslint@9.14.0)
+      '@eslint-community/eslint-utils': 4.4.1(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))
       '@typescript-eslint/scope-manager': 8.13.0
       '@typescript-eslint/types': 8.13.0
       '@typescript-eslint/typescript-estree': 8.13.0(typescript@5.6.3)
-      eslint: 9.14.0
+      eslint: 9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -1038,9 +1043,9 @@ snapshots:
 
   eslint-visitor-keys@4.2.0: {}
 
-  eslint@9.14.0:
+  eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq):
     dependencies:
-      '@eslint-community/eslint-utils': 4.4.1(eslint@9.14.0)
+      '@eslint-community/eslint-utils': 4.4.1(eslint@9.14.0(patch_hash=zkezryfwuynxcysseud66ngtpq))
       '@eslint-community/regexpp': 4.12.1
       '@eslint/config-array': 0.18.0
       '@eslint/core': 0.7.0
