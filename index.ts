@@ -2,17 +2,18 @@ import type * as ts from 'typescript';
 
 import path = require('node:path');
 import config = require('@tsslint/config');
-import eslint = require('@tsslint/eslint');
+// import eslint = require('@tsslint/eslint');
 
 module.exports = config.defineConfig({
 	rules: {
-		semantic: {
-			'no-unnecessary-type-assertion': eslint.convertRule(
-				require('./node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-type-assertion').default,
-				[],
-				0 satisfies ts.DiagnosticCategory.Warning
-			),
-		},
+		// Waiting for https://github.com/volarjs/volar.js/commit/e242709a91e9d2919dc4fa59278dd266fd11e7a3 released
+		// semantic: {
+		// 	'no-unnecessary-type-assertion': eslint.convertRule(
+		// 		require('./node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-type-assertion').default,
+		// 		[],
+		// 		0 satisfies ts.DiagnosticCategory.Warning
+		// 	),
+		// },
 		format: {
 			/**
 			 * @example
