@@ -377,7 +377,7 @@ module.exports = config.defineConfig({
 							reportWarning(
 								`prefer \`${value} satisfies ${exp}\` over \`${exp}\``,
 								node.getStart(sourceFile),
-								node.getEnd()
+								node.getEnd(),
 							).withFix(
 								`Add \`${value} satisfies \` before the expression`,
 								() => [{
@@ -386,16 +386,16 @@ module.exports = config.defineConfig({
 										newText: `${value} satisfies `,
 										span: {
 											start: node.getStart(sourceFile),
-											length: 0
-										}
-									}]
-								}]
+											length: 0,
+										},
+									}],
+								}],
 							);
 						}
 					}
 					ts.forEachChild(node, visit);
 				});
-			}
+			},
 		},
 		syntactic: {
 			/**
