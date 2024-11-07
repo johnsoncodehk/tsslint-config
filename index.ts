@@ -6,14 +6,56 @@ import config = require('@tsslint/config');
 
 module.exports = config.defineConfig({
 	rules: {
-		// Waiting for https://github.com/volarjs/volar.js/commit/e242709a91e9d2919dc4fa59278dd266fd11e7a3 released
-		// semantic: {
-		// 	'no-unnecessary-type-assertion': eslint.convertRule(
-		// 		require('./node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-type-assertion').default,
-		// 		[],
-		// 		0 satisfies ts.DiagnosticCategory.Warning
-		// 	),
-		// },
+		semantic: {
+			// Waiting for https://github.com/volarjs/volar.js/commit/e242709a91e9d2919dc4fa59278dd266fd11e7a3 released
+			// 'no-unnecessary-type-assertion': eslint.convertRule(
+			// 	require('./node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-type-assertion').default,
+			// 	[],
+			// 	0 satisfies ts.DiagnosticCategory.Warning
+			// ),
+			/**
+			 * @example
+			 * ```diff
+			 * - const type = CompilerDOM.NodeTypes.ELEMENT;
+			 * + const type = 1 satisfies CompilerDOM.NodeTypes.ELEMENT;
+			 * ```
+			 */
+			'prefer-satisfies-enum-value'({ typescript: ts, sourceFile, languageService, reportWarning }) {
+				const program = languageService.getProgram();
+				const checker = program.getTypeChecker();
+
+				ts.forEachChild(sourceFile, function visit(node) {
+					if (ts.isPropertyAccessExpression(node)) {
+
+						const symbol = checker.getSymbolAtLocation(node.name);
+						const decl = symbol?.valueDeclaration;
+
+						if (decl && ts.isEnumMember(decl)) {
+							const value = checker.getConstantValue(decl);
+							const exp = node.getText(sourceFile);
+							reportWarning(
+								`prefer \`${value} satisfies ${exp}\` over \`${exp}\``,
+								node.getStart(sourceFile),
+								node.getEnd()
+							).withFix(
+								`Add \`${value} satisfies \` before the expression`,
+								() => [{
+									fileName: sourceFile.fileName,
+									textChanges: [{
+										newText: `${value} satisfies `,
+										span: {
+											start: node.getStart(sourceFile),
+											length: 0,
+										},
+									}],
+								}]
+							);
+						}
+					}
+					ts.forEachChild(node, visit);
+				});
+			},
+		},
 		format: {
 			/**
 			 * @example
@@ -353,50 +395,6 @@ module.exports = config.defineConfig({
 								`Module '${moduleName}' should be in the dependencies.`,
 								node.getStart(sourceFile),
 								node.getEnd()
-							);
-						}
-					}
-					ts.forEachChild(node, visit);
-				});
-			},
-		},
-		semantic: {
-			/**
-			 * @example
-			 * ```diff
-			 * - const type = CompilerDOM.NodeTypes.ELEMENT;
-			 * + const type = 1 satisfies CompilerDOM.NodeTypes.ELEMENT;
-			 * ```
-			 */
-			'prefer-satisfies-enum-value'({ typescript: ts, sourceFile, languageService, reportWarning }) {
-				const program = languageService.getProgram();
-				const checker = program.getTypeChecker();
-	
-				ts.forEachChild(sourceFile, function visit(node) {
-					if (ts.isPropertyAccessExpression(node)) {
-	
-						const symbol = checker.getSymbolAtLocation(node.name);
-						const decl = symbol?.valueDeclaration;
-	
-						if (decl && ts.isEnumMember(decl)) {
-							const value = checker.getConstantValue(decl);
-							const exp = node.getText(sourceFile);
-							reportWarning(
-								`prefer \`${value} satisfies ${exp}\` over \`${exp}\``,
-								node.getStart(sourceFile),
-								node.getEnd(),
-							).withFix(
-								`Add \`${value} satisfies \` before the expression`,
-								() => [{
-									fileName: sourceFile.fileName,
-									textChanges: [{
-										newText: `${value} satisfies `,
-										span: {
-											start: node.getStart(sourceFile),
-											length: 0,
-										},
-									}],
-								}],
 							);
 						}
 					}
