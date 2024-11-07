@@ -360,6 +360,43 @@ module.exports = config.defineConfig({
 				});
 			},
 		},
+		semantic: {
+			'prefer-satisfies-enum-value'({ typescript: ts, sourceFile, languageService, reportWarning }) {
+				const program = languageService.getProgram();
+				const checker = program.getTypeChecker();
+	
+				ts.forEachChild(sourceFile, function visit(node) {
+					if (ts.isPropertyAccessExpression(node)) {
+	
+						const symbol = checker.getSymbolAtLocation(node.name);
+						const decl = symbol?.valueDeclaration;
+	
+						if (decl && ts.isEnumMember(decl)) {
+							const value = checker.getConstantValue(decl);
+							const exp = node.getText(sourceFile);
+							reportWarning(
+								`prefer \`${value} satisfies ${exp}\` over \`${exp}\``,
+								node.getStart(sourceFile),
+								node.getEnd()
+							).withFix(
+								`Add \`${value} satisfies \` before the expression`,
+								() => [{
+									fileName: sourceFile.fileName,
+									textChanges: [{
+										newText: `${value} satisfies `,
+										span: {
+											start: node.getStart(sourceFile),
+											length: 0
+										}
+									}]
+								}]
+							);
+						}
+					}
+					ts.forEachChild(node, visit);
+				});
+			}
+		},
 		syntactic: {
 			/**
 			 * @example
