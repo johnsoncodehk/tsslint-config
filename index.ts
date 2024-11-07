@@ -361,6 +361,13 @@ module.exports = config.defineConfig({
 			},
 		},
 		semantic: {
+			/**
+			 * @example
+			 * ```diff
+			 * - const type = CompilerDOM.NodeTypes.ELEMENT;
+			 * + const type = 1 satisfies CompilerDOM.NodeTypes.ELEMENT;
+			 * ```
+			 */
 			'prefer-satisfies-enum-value'({ typescript: ts, sourceFile, languageService, reportWarning }) {
 				const program = languageService.getProgram();
 				const checker = program.getTypeChecker();
