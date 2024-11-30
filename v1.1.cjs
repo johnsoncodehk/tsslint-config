@@ -3,17 +3,17 @@ var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 
-// node_modules/.pnpm/@tsslint+types@1.1.3/node_modules/@tsslint/types/index.js
+// node_modules/.pnpm/@tsslint+types@1.1.4/node_modules/@tsslint/types/index.js
 var require_types = __commonJS({
-  "node_modules/.pnpm/@tsslint+types@1.1.3/node_modules/@tsslint/types/index.js"(exports2) {
+  "node_modules/.pnpm/@tsslint+types@1.1.4/node_modules/@tsslint/types/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
   }
 });
 
-// node_modules/.pnpm/@tsslint+config@file+..+tsslint+packages+config/node_modules/@tsslint/config/index.js
+// node_modules/.pnpm/@tsslint+config@1.1.4/node_modules/@tsslint/config/index.js
 var require_config = __commonJS({
-  "node_modules/.pnpm/@tsslint+config@file+..+tsslint+packages+config/node_modules/@tsslint/config/index.js"(exports2) {
+  "node_modules/.pnpm/@tsslint+config@1.1.4/node_modules/@tsslint/config/index.js"(exports2) {
     "use strict";
     var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -53,13 +53,14 @@ var path = require("node:path");
 var config = require_config();
 module.exports = config.defineConfig({
   rules: {
-    semantic: {
-      // 'no-unnecessary-type-assertion': eslint.convertRule(
-      // 	require('./node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-type-assertion').default,
-      // 	[],
-      // 	0 satisfies ts.DiagnosticCategory.Warning
-      // ),
-    },
+    // Waiting for https://github.com/volarjs/volar.js/commit/e242709a91e9d2919dc4fa59278dd266fd11e7a3 released
+    // semantic: {
+    // 	'no-unnecessary-type-assertion': eslint.convertRule(
+    // 		require('./node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unnecessary-type-assertion').default,
+    // 		[],
+    // 		0 satisfies ts.DiagnosticCategory.Warning
+    // 	),
+    // },
     format: {
       /**
        * @example
