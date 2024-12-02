@@ -14,7 +14,7 @@ module.exports = config.defineConfig({
 		// 		0 satisfies ts.DiagnosticCategory.Warning
 		// 	),
 		// },
-		format: {
+		stylistic: {
 			/**
 			 * @example
 			 * ```diff
