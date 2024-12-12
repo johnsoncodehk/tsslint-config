@@ -1,1 +1,1 @@
-export { default } from './v1.3.cjs';
+export { default } from './v1.4.cjs';
