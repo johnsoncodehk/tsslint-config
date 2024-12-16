@@ -29,11 +29,11 @@ module.exports = config.defineConfig({
 				ts.forEachChild(sourceFile, function visit(node) {
 					if (ts.isInterfaceDeclaration(node)) {
 						for (const member of node.members) {
-							if (text[member.end - 1] !== ';') {
+							if (text[member.end - 1] === ',') {
 								reportWarning(
 									`Interface properties should end with a semicolon.`,
-									member.getStart(sourceFile),
-									member.getEnd()
+									member.end - 1,
+									member.end
 								).withFix(
 									'Replace comma with semicolon',
 									() => [{
@@ -43,6 +43,25 @@ module.exports = config.defineConfig({
 											span: {
 												start: member.end - 1,
 												length: 1,
+											},
+										}],
+									}]
+								).withDeprecated();
+							}
+							else if (text[member.end - 1] !== ';') {
+								reportWarning(
+									`Interface properties should end with a semicolon.`,
+									member.end,
+									member.end
+								).withFix(
+									'Insert semicolon',
+									() => [{
+										fileName: sourceFile.fileName,
+										textChanges: [{
+											newText: ';',
+											span: {
+												start: member.end,
+												length: 0,
 											},
 										}],
 									}]
