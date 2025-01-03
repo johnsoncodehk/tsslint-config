@@ -1,10 +1,10 @@
+import type { Config } from '@tsslint/config';
 import type * as ts from 'typescript';
 
 import path = require('node:path');
-import config = require('@tsslint/config');
 // import eslint = require('@tsslint/eslint');
 
-module.exports = config.defineConfig({
+module.exports = {
 	rules: {
 		// Waiting for https://github.com/volarjs/volar.js/commit/e242709a91e9d2919dc4fa59278dd266fd11e7a3 released
 		// semantic: {
@@ -322,4 +322,4 @@ module.exports = config.defineConfig({
 			});
 		},
 	],
-});
+} satisfies Config;
