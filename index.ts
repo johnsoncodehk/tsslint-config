@@ -14,320 +14,6 @@ module.exports = config.defineConfig({
 		// 		0 satisfies ts.DiagnosticCategory.Warning
 		// 	),
 		// },
-		stylistic: {
-			/**
-			 * @example
-			 * ```diff
-			 * interface MyInterface {
-			 * -   prop: string,
-			 * +   prop: string;
-			 * }
-			 * ```
-			 */
-			'interface-property-semicolon'({ typescript: ts, sourceFile, reportWarning }) {
-				const { text } = sourceFile;
-				ts.forEachChild(sourceFile, function visit(node) {
-					if (ts.isInterfaceDeclaration(node)) {
-						for (const member of node.members) {
-							if (text[member.end - 1] === ',') {
-								reportWarning(
-									`Interface properties should end with a semicolon.`,
-									member.end - 1,
-									member.end
-								).withFix(
-									'Replace comma with semicolon',
-									() => [{
-										fileName: sourceFile.fileName,
-										textChanges: [{
-											newText: ';',
-											span: {
-												start: member.end - 1,
-												length: 1,
-											},
-										}],
-									}]
-								).withDeprecated();
-							}
-							else if (text[member.end - 1] !== ';') {
-								reportWarning(
-									`Interface properties should end with a semicolon.`,
-									member.end,
-									member.end
-								).withFix(
-									'Insert semicolon',
-									() => [{
-										fileName: sourceFile.fileName,
-										textChanges: [{
-											newText: ';',
-											span: {
-												start: member.end,
-												length: 0,
-											},
-										}],
-									}]
-								);
-							}
-						}
-					}
-					ts.forEachChild(node, visit);
-				});
-			},
-			/**
-			 * @example
-			 * ```diff
-			 * - if (foo) bar();
-			 * + if (foo) {
-			 * +   bar();
-			 * + }
-			 * ```
-			 */
-			'braces-around-statements'({ typescript: ts, sourceFile, reportWarning }) {
-				ts.forEachChild(sourceFile, function visit(node) {
-					if (ts.isIfStatement(node)) {
-						if (!ts.isBlock(node.thenStatement)) {
-							reportWithFix(node.thenStatement);
-						}
-						if (node.elseStatement && !ts.isIfStatement(node.elseStatement) && !ts.isBlock(node.elseStatement)) {
-							reportWithFix(node.elseStatement);
-						}
-					}
-					// @ts-expect-error
-					else if ('statement' in node && ts.isStatement(node.statement)) {
-						const statement = node.statement;
-						if (!ts.isBlock(node.statement)) {
-							reportWithFix(statement);
-						}
-					}
-					ts.forEachChild(node, visit);
-				});
-				function reportWithFix(statement: ts.Statement) {
-					reportWarning(
-						`Statements should be wrapped in braces.`,
-						statement.getStart(sourceFile),
-						statement.getEnd()
-					).withFix(
-						'Add braces around the statement',
-						() => [{
-							fileName: sourceFile.fileName,
-							textChanges: [
-								{
-									newText: isSameLine(statement)
-										? ' {\n'
-										: ' {',
-									span: {
-										start: statement.getFullStart(),
-										length: 0,
-									},
-								},
-								{
-									newText: '\n}',
-									span: {
-										start:
-											ts.getTrailingCommentRanges(
-												sourceFile.text,
-												statement.getEnd()
-											)?.reverse()?.[0]?.end
-											?? statement.getEnd(),
-										length: 0,
-									},
-								}
-							],
-						}]
-					);
-				}
-				function isSameLine(node: ts.Node) {
-					return ts.getLineAndCharacterOfPosition(sourceFile, node.getFullStart()).line
-						=== ts.getLineAndCharacterOfPosition(sourceFile, node.parent.getEnd()).line;
-				}
-			},
-			/**
-			 * @example
-			 * ```diff
-			 * - const foo = (bar) => {};
-			 * + const foo = bar => {};
-			 * ```
-			 */
-			'arrow-parens'({ typescript: ts, sourceFile, reportWarning }) {
-				ts.forEachChild(sourceFile, function visit(node) {
-					if (
-						ts.isArrowFunction(node)
-						&& node.parameters.length === 1
-						&& !node.type
-					) {
-						const parameter = node.parameters[0];
-						if (
-							ts.isIdentifier(parameter.name)
-							&& !parameter.type
-							&& !parameter.dotDotDotToken
-							&& !parameter.initializer
-							&& sourceFile.text[parameter.getStart(sourceFile) - 1] === '('
-							&& sourceFile.text[parameter.getEnd()] === ')'
-						) {
-							reportWarning(
-								`Parentheses should be omitted.`,
-								parameter.getStart(sourceFile),
-								parameter.getEnd()
-							).withFix(
-								'Remove parentheses around the parameter',
-								() => [{
-									fileName: sourceFile.fileName,
-									textChanges: [
-										{
-											newText: '',
-											span: {
-												start: parameter.getStart(sourceFile) - 1,
-												length: 1,
-											},
-										},
-										{
-											newText: '',
-											span: {
-												start: parameter.getEnd(),
-												length: 1,
-											},
-										}
-									],
-								}]
-							);
-						}
-					}
-					ts.forEachChild(node, visit);
-				});
-			},
-			'need-format'({ typescript: ts, sourceFile, languageService, reportWarning }) {
-				const textChanges = languageService.getFormattingEditsForDocument(sourceFile.fileName, {
-					...ts.getDefaultFormatCodeSettings(),
-					convertTabsToSpaces: false,
-					tabSize: 4,
-					indentSize: 4,
-					indentStyle: ts.IndentStyle.Smart,
-					newLineCharacter: '\n',
-					insertSpaceAfterCommaDelimiter: true,
-					insertSpaceAfterConstructor: false,
-					insertSpaceAfterSemicolonInForStatements: true,
-					insertSpaceBeforeAndAfterBinaryOperators: true,
-					insertSpaceAfterKeywordsInControlFlowStatements: true,
-					insertSpaceAfterFunctionKeywordForAnonymousFunctions: true,
-					insertSpaceBeforeFunctionParenthesis: false,
-					insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: false,
-					insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets: false,
-					insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
-					insertSpaceAfterOpeningAndBeforeClosingEmptyBraces: true,
-					insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: false,
-					insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces: false,
-					insertSpaceAfterTypeAssertion: false,
-					placeOpenBraceOnNewLineForFunctions: false,
-					placeOpenBraceOnNewLineForControlBlocks: false,
-					semicolons: ts.SemicolonPreference.Ignore,
-				});
-				for (const textChange of textChanges) {
-					const originalText = sourceFile.text.slice(textChange.span.start, textChange.span.start + textChange.span.length);
-					if (originalText !== textChange.newText) {
-						reportWarning(
-							`The document is not formatted.`,
-							textChange.span.start,
-							textChange.span.start + textChange.span.length
-						).withFix(
-							'Format the file',
-							() => [{
-								fileName: sourceFile.fileName,
-								textChanges: [textChange],
-							}]
-						);
-					}
-				}
-			},
-			'no-trailing-comma-in-function'({ typescript: ts, sourceFile, reportWarning }) {
-				const { text } = sourceFile;
-				ts.forEachChild(sourceFile, function visit(node) {
-					if (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node) || ts.isMethodDeclaration(node)) {
-						const parameters = node.parameters;
-						if (parameters.length > 0) {
-							const lastParameter = parameters[parameters.length - 1];
-							const nextCharIndex = lastParameter.end;
-							if (text[nextCharIndex] === ',') {
-								reportWarning(
-									`The last parameter of a function should not have a trailing comma.`,
-									lastParameter.getStart(sourceFile),
-									lastParameter.getEnd()
-								).withFix(
-									'Remove trailing comma',
-									() => [{
-										fileName: sourceFile.fileName,
-										textChanges: [{
-											span: { start: nextCharIndex, length: 1 },
-											newText: ''
-										}]
-									}]
-								);
-							}
-						}
-					}
-					ts.forEachChild(node, visit);
-				});
-			},
-			'no-trailing-comma-in-function-call'({ typescript: ts, sourceFile, reportWarning }) {
-				const { text } = sourceFile;
-				ts.forEachChild(sourceFile, function visit(node) {
-					if (ts.isCallExpression(node)) {
-						if (node.arguments.length > 0) {
-							const lastArgument = node.arguments[node.arguments.length - 1];
-							const nextCharIndex = lastArgument.end;
-							if (text[nextCharIndex] === ',') {
-								reportWarning(
-									`The last argument of a function call should not have a trailing comma.`,
-									lastArgument.getStart(sourceFile),
-									lastArgument.getEnd()
-								).withFix(
-									'Remove trailing comma',
-									() => [{
-										fileName: sourceFile.fileName,
-										textChanges: [{
-											span: { start: nextCharIndex, length: 1 },
-											newText: ''
-										}]
-									}]
-								);
-							}
-						}
-					}
-					ts.forEachChild(node, visit);
-				});
-			},
-			'no-unnecessary-parentheses'({ typescript: ts, sourceFile, reportWarning }) {
-				ts.forEachChild(sourceFile, function visit(node) {
-					if (ts.isParenthesizedExpression(node)) {
-						if (
-							ts.isIdentifier(node.expression)
-							|| ts.isPropertyAccessExpression(node.expression)
-							|| ts.isElementAccessExpression(node.expression)
-							|| ts.isCallExpression(node.expression)
-						) {
-							const start = node.getStart(sourceFile);
-							const end = node.getEnd();
-							reportWarning(
-								`Parentheses are unnecessary.`,
-								start,
-								end
-							).withFix(
-								'Remove parentheses',
-								() => [{
-									fileName: sourceFile.fileName,
-									textChanges: [{
-										span: { start, length: 1 },
-										newText: '',
-									}, {
-										span: { start: end - 1, length: 1 },
-										newText: '',
-									}],
-								}]
-							);
-						}
-					}
-					ts.forEachChild(node, visit);
-				});
-			},
-		},
 		workspace: {
 			'missing-dependency'({ typescript: ts, sourceFile, reportError, languageServiceHost }) {
 				const { noEmit } = languageServiceHost.getCompilationSettings();
@@ -481,4 +167,159 @@ module.exports = config.defineConfig({
 			},
 		},
 	},
+	formatting: [
+		/**
+		 * @example
+		 * ```diff
+		 * interface MyInterface {
+		 * -   prop: string,
+		 * +   prop: string;
+		 * }
+		 * ```
+		 */
+		function interfacePropertySemicolon({ typescript: ts, sourceFile, replace, insert }) {
+			const { text } = sourceFile;
+			ts.forEachChild(sourceFile, function visit(node) {
+				if (ts.isInterfaceDeclaration(node)) {
+					for (const member of node.members) {
+						if (text[member.end - 1] === ',') {
+							replace(member.end - 1, member.end, ';');
+						}
+						else if (text[member.end - 1] !== ';') {
+							insert(member.end, ';');
+						}
+					}
+				}
+				ts.forEachChild(node, visit);
+			});
+		},
+		/**
+		 * @example
+		 * ```diff
+		 * - if (foo) bar();
+		 * + if (foo) {
+		 * +   bar();
+		 * + }
+		 * ```
+		 */
+		function bracesAroundStatements({ typescript: ts, sourceFile, insert }) {
+			ts.forEachChild(sourceFile, function visit(node) {
+				if (ts.isIfStatement(node)) {
+					if (!ts.isBlock(node.thenStatement)) {
+						edit(node.thenStatement);
+					}
+					if (node.elseStatement && !ts.isIfStatement(node.elseStatement) && !ts.isBlock(node.elseStatement)) {
+						edit(node.elseStatement);
+					}
+				}
+				// @ts-expect-error
+				else if ('statement' in node && ts.isStatement(node.statement)) {
+					const statement = node.statement;
+					if (!ts.isBlock(node.statement)) {
+						edit(statement);
+					}
+				}
+				ts.forEachChild(node, visit);
+			});
+			function edit(statement: ts.Statement) {
+				insert(
+					statement.getFullStart(),
+					isSameLine(statement)
+						? ' {\n'
+						: ' {'
+				);
+				insert(
+					ts.getTrailingCommentRanges(
+						sourceFile.text,
+						statement.getEnd()
+					)?.reverse()?.[0]?.end
+					?? statement.getEnd(),
+					'\n}'
+				);
+			}
+			function isSameLine(node: ts.Node) {
+				return ts.getLineAndCharacterOfPosition(sourceFile, node.getFullStart()).line
+					=== ts.getLineAndCharacterOfPosition(sourceFile, node.parent.getEnd()).line;
+			}
+		},
+		/**
+		 * @example
+		 * ```diff
+		 * - const foo = (bar) => {};
+		 * + const foo = bar => {};
+		 * ```
+		 */
+		function arrowParens({ typescript: ts, sourceFile, remove }) {
+			ts.forEachChild(sourceFile, function visit(node) {
+				if (
+					ts.isArrowFunction(node)
+					&& node.parameters.length === 1
+					&& !node.type
+				) {
+					const parameter = node.parameters[0];
+					if (
+						ts.isIdentifier(parameter.name)
+						&& !parameter.type
+						&& !parameter.dotDotDotToken
+						&& !parameter.initializer
+						&& sourceFile.text[parameter.getStart(sourceFile) - 1] === '('
+						&& sourceFile.text[parameter.getEnd()] === ')'
+					) {
+						remove(parameter.getStart(sourceFile) - 1, parameter.getStart(sourceFile));
+						remove(parameter.getEnd(), parameter.getEnd() + 1);
+					}
+				}
+				ts.forEachChild(node, visit);
+			});
+		},
+		function noTrailingCommaInFunction({ typescript: ts, sourceFile, remove }) {
+			const { text } = sourceFile;
+			ts.forEachChild(sourceFile, function visit(node) {
+				if (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node) || ts.isMethodDeclaration(node)) {
+					const parameters = node.parameters;
+					if (parameters.length > 0) {
+						const lastParameter = parameters[parameters.length - 1];
+						const nextCharIndex = lastParameter.end;
+						if (text[nextCharIndex] === ',') {
+							remove(nextCharIndex, nextCharIndex + 1);
+						}
+					}
+				}
+				ts.forEachChild(node, visit);
+			});
+		},
+		function noTrailingCommaInFunctionCall({ typescript: ts, sourceFile, remove }) {
+			const { text } = sourceFile;
+			ts.forEachChild(sourceFile, function visit(node) {
+				if (ts.isCallExpression(node)) {
+					if (node.arguments.length > 0) {
+						const lastArgument = node.arguments[node.arguments.length - 1];
+						const nextCharIndex = lastArgument.end;
+						if (text[nextCharIndex] === ',') {
+							remove(nextCharIndex, nextCharIndex + 1);
+						}
+					}
+				}
+				ts.forEachChild(node, visit);
+			});
+		},
+		function noUnnecessaryParentheses({ typescript: ts, sourceFile, remove }) {
+			ts.forEachChild(sourceFile, function visit(node) {
+				if (ts.isParenthesizedExpression(node)) {
+					if (
+						ts.isIdentifier(node.expression)
+						|| ts.isPropertyAccessExpression(node.expression)
+						|| ts.isElementAccessExpression(node.expression)
+						|| ts.isCallExpression(node.expression)
+					) {
+						const start = node.getStart(sourceFile);
+						const end = node.getEnd();
+						remove(start, start + 1);
+						remove(end - 1, end);
+					}
+				}
+				ts.forEachChild(node, visit);
+			});
+		},
+	],
 });
