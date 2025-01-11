@@ -7,15 +7,8 @@
 	"devDependencies": {
 		"@tsslint/cli": "latest",
 		"@tsslint/config": "latest",
-		"@tsslint/eslint": "latest",
 		"@types/node": "latest",
-		"@typescript-eslint/eslint-plugin": "latest",
 		"esbuild": "latest",
 		"typescript": "latest"
-	},
-	"pnpm": {
-		"patchedDependencies": {
-			"eslint": "patches/eslint.patch"
-		}
 	}
 }
