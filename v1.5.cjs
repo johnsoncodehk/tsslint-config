@@ -61,7 +61,7 @@ module.exports = {
                 `Property '${node.name.text}' is accessed but not used.`,
                 node.getStart(sourceFile),
                 node.getEnd()
-              ).withFix(
+              ).withRefactor(
                 "Remove unused property access",
                 () => [{
                   fileName: sourceFile.fileName,
